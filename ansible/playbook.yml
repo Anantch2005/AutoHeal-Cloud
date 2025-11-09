@@ -1,0 +1,9 @@
+---
+- name: Deploy AutoHeal Cloud Web App
+  hosts: all
+  become: yes
+  vars_files:
+    - roles/deploy_app/vars/main.yml
+  roles:
+    - deploy_app
+

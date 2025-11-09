@@ -1,0 +1,12 @@
+# Remote Backend Setup for AutoHeal Cloud
+
+This folder creates the **S3 bucket** and **DynamoDB table** used for Terraform remote state and locking.
+
+---
+
+## 🧭 Steps to Run (Run Once)
+
+
+  1. cd remote-backend-s3
+  2. terraform init
+  3. terraform apply -auto-approve

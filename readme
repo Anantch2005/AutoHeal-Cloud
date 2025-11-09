@@ -1,0 +1,208 @@
+🌩️ AutoHeal Cloud — Full DevOps Automation Project
+
+🌐 Project Overview
+
+    AutoHeal Cloud is a fully automated, self-healing, multi-region deployment pipeline that provisions infrastructure and deploys a containerized web application using Jenkins, Terraform, Docker, Ansible, and AWS.
+    It ensures zero downtime, automatic failover, and global accessibility via AWS Global Accelerator.
+
+    ==> Whenever you push code to the repository, Jenkins automatically:
+
+    1.Builds and tests the app.
+
+    2.Builds and pushes a Docker image to DockerHub.
+
+    3.Provisions AWS infrastructure using Terraform.
+
+    4.Configures EC2 instances using Ansible.
+
+    5.Deploys the containerized web app.
+
+    6.Performs health checks and auto-heals failed containers.
+
+
+
+
+🧠 Project Architecture
+
+    [GitHub → Jenkins → Terraform → AWS → Ansible → Docker → AutoHeal]
+
+
+🔁 CI/CD Flow
+
+    1. Source Code (GitHub):
+
+        *Stores app code, Dockerfile, Terraform, and Ansible files.
+
+    2.Jenkins (CI/CD Automation):
+
+        *Pulls latest code.
+
+        *Runs Python syntax tests
+
+        *Builds & pushes Docker image to DockerHub.
+
+        *Triggers Terraform for infra creation.
+
+        *Runs Ansible to configure and deploy containers.
+
+        *Performs health checks and auto-healing.
+
+    3.Terraform (Infrastructure as Code):
+
+        *Provisions multi-region AWS infrastructure:
+
+        *EC2 (Auto Scaling Groups)
+
+        *Application Load Balancers (ALB)
+
+        *Global Accelerator for single IP + failover
+
+        *VPCs, subnets, security groups, and key pairs
+
+        *Stores state remotely in S3 with DynamoDB locking.
+
+    4.Ansible (Configuration Management):
+
+        *Installs Docker on EC2.
+
+        *Pulls app image from DockerHub.
+
+        *Runs and maintains web containers.
+
+        *Supports primary and secondary region groups.
+
+    5.Docker (Containerization):
+
+        *The Flask app is containerized with a simple HTML frontend.
+
+        *Image hosted on DockerHub: anant2005ch/autoheal-cloud.
+
+    6.AWS (Cloud Infrastructure):
+
+        *Multi-region, high-availability deployment.
+
+        *Global Accelerator routes traffic to the nearest healthy region.
+
+        *Auto Scaling + ALB handles load and replacement.
+
+
+## Project Structure
+    AutoHeal-Cloud/
+    ├── ansible/
+    │   ├── inventory.ini
+    │   ├── playbook.yml
+    │   └── roles/
+    │       └── deploy_app/
+    │           ├── tasks/main.yml
+    │           ├── templates/index.html
+    │           └── vars/main.yml
+    ├── app/
+    │   ├── app.py
+    │   ├── Dockerfile
+    │   ├── index.html
+    │   └── requirements.txt
+    ├── jenkinsfile
+    ├── remote-backend-s3/
+    │   ├── main.tf
+    │   └── readme
+    ├── scripts/
+    │   └── generate_inventory.py
+    └── terraform/
+        ├── main.tf
+        ├── outputs.tf
+        ├── provider.tf
+        ├── terraform.tfvars
+        └── variables.tf
+
+
+## Jenkins Pipeline Flow
+    1. Install Dependencies
+    2. Checkout Code
+    3. Test App
+    4. Build & Push Docker Image
+    5. Terraform Remote Backend
+    6. Archive Backend State File
+    7. Terraform Main Apply
+    8. Generate Ansible Inventory
+    9. Configure EC2 Instances
+    10. Health Check & Auto-Healing
+
+
+⚙️ Jenkins Pipeline Stages
+    Stage	                      -    Description
+    1.Install Dependencies	      -      Installs Terraform, Ansible, AWS CLI, Docker, Python deps inside the Jenkins container.
+    2.Checkout Code	              -      Pulls latest source from GitHub.
+    3.Test App	                  -      Runs syntax tests on the Python (Flask) app.
+    4.Build & Push Docker Image	  -      Builds image → pushes to DockerHub using credentials.
+    5.Terraform Remote Backend	  -      Creates S3 bucket + DynamoDB for Terraform state.
+    6.Terraform Apply (Main)	      -      Provisions AWS infra across two regions.
+    7.Generate Ansible Inventory	  -     Uses Python script to generate inventory from Terraform outputs.
+    8.Configure EC2s with Ansible	  -      Installs Docker, deploys app containers on both regions.
+    9.Health Check & AutoHeal	      -      Verifies app health; restarts containers if any fail.
+
+
+🔄 Auto-Healing Behavior
+
+1.Jenkins performs periodic health checks after deployment.
+
+2.If any EC2 or container fails:
+
+    *ASG replaces unhealthy EC2.
+
+    *Ansible redeploys container.
+
+    *Global Accelerator reroutes traffic automatically to healthy region.
+
+3.Pipeline ensures zero downtime and automatic recovery.
+
+
+🌎 Accessing Your Application
+
+    Once the deployment is complete, you can access your live web application using the Global Accelerator IP address.
+    No matter which AWS region or instance goes down, this single IP will always route traffic to a healthy region automatically — ensuring your project stays online 24×7.
+
+    Example:
+        [http://<GLOBAL_ACCELERATOR_IP>]
+
+
+🧠 Key Features
+
+    ✅ Fully automated end-to-end CI/CD pipeline
+    ✅ Multi-region, high-availability infrastructure
+    ✅ Self-healing using Jenkins + Ansible + ASG
+    ✅ Zero manual steps — push code → full deployment
+    ✅ Containerized application for portability
+
+
+🔐 Credentials Setup
+    Credential ID       	Type	                     Description
+    aws-creds	    -    AWS Credentials	  -       Used by Terraform
+    docker-cred     -	Username & Password   - 	 DockerHub login
+    github-creds	-    SSH Key	          -       To clone private repo (optional)
+
+
+## Destroying Infrastructure
+    1. Navigate to the terraform directory:
+          terraform destroy -auto-approve
+    2. To remove backend (S3 + DynamoDB):
+          cd remote-backend-s3
+          terraform destroy -auto-approve
+ 
+
+## Backend State Archive
+    The Jenkins stage "Archive Backend State File" saves the latest S3 backend state
+    (remote-backend-s3/terraform.tfstate) as an artifact.
+    You can download it from Jenkins → Build Artifacts → terraform
+
+
+🏆 Outcome
+    ✅ Fully automated CI/CD pipeline
+    ✅ Self-healing multi-region deployment
+    ✅ Single global IP with automatic failover
+    ✅ Complete infrastructure + configuration automation
+    ✅ Perfect portfolio-level DevOps project
+
+👨‍💻 Author
+
+    Anant Ch. — DevOps Engineer in progress 🚀
+    Passionate about automation, cloud architecture, and scalable deployment pipelines.

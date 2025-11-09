@@ -1,0 +1,62 @@
+
+---
+
+## 🧹 **.gitignore**
+
+This `.gitignore` ensures you don’t accidentally commit sensitive files (like keys, Terraform state, or credentials).
+
+```gitignore
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Terraform
+terraform.tfstate
+terraform.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# SSH Keys
+*.pem
+
+# Ansible
+ansible/*.retry
+ansible/inventory.ini
+
+# Logs
+*.log
+
+# Credentials
+*.env
+.env
+secrets.yml
+
+# Docker
+*.tar
+*.log
+docker-compose.override.yml
+
+# Jenkins
+/workspace/
+/tmp/
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Compiled files
+*.zip
+*.gz
+*.tar.gz
+*.tgz
+*.bak
+
+# AWS CLI or Boto cache
+.aws/
+.cache/

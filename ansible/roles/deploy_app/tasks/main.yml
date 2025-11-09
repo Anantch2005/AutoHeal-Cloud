@@ -1,0 +1,34 @@
+---
+- name: Ensure Docker is installed
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Pull latest web app image
+  docker_image:
+    name: "{{ docker_image }}"
+    source: pull
+
+- name: Stop existing container (if any)
+  shell: docker stop {{ app_name }} || true
+  ignore_errors: yes
+
+- name: Remove existing container (if any)
+  shell: docker rm {{ app_name }} || true
+  ignore_errors: yes
+
+- name: Run new web app container
+  docker_container:
+    name: "{{ app_name }}"
+    image: "{{ docker_image }}"
+    state: started
+    restart_policy: always
+    published_ports:
+      - "80:{{ container_port }}"

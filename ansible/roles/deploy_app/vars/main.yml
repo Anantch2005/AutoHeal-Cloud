@@ -1,0 +1,4 @@
+---
+app_name: autoheal-cloud
+docker_image: anant2005ch/autoheal-cloud:latest   # your image on DockerHub
+container_port: 80
